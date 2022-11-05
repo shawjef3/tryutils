@@ -9,7 +9,7 @@ The main problem I wanted solved was to call close on all items of a collection,
 ## Dependency
 
 ```sbt
-libraryDependencies += "me.jeffshaw.tryutils" %% "tryutils" % "1.0.0"
+libraryDependencies += "me.jeffshaw.tryutils" %% "tryutils" % "1.0.1"
 ```
 
 ## Imports
