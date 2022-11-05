@@ -2,7 +2,9 @@ organization := "me.jeffshaw.tryutils"
 
 name := "tryutils"
 
-version := "1"
+version := "1.0.1-SNAPSHOT"
+
+versionScheme := Some("semver-spec")
 
 scalaVersion := "3.2.1"
 
@@ -30,17 +32,13 @@ scalacOptions ++= {
   }
 }
 
+resolvers ++= Resolver.sonatypeOssRepos("releases")
+
+mimaPreviousArtifacts := Set("me.jeffshaw.tryutils" %% "tryutils" % "1.0.0")
+
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("https://github.com/shawjef3/tryutils"))
-
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
 
 scmInfo := Some(ScmInfo(url("https://github.com/shawjef/tryutils"), "git@github.com:shawjef3/tryutils.git"))
 

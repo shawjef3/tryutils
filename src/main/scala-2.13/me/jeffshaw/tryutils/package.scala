@@ -58,13 +58,11 @@ package object tryutils {
      */
     def tryForeach(f: A => Unit): Unit = {
       var throwables: Builder[Throwable, Seq[Throwable]] = null
-      val successes = Seq.newBuilder[A]
       var failures: Builder[A, Seq[A]] = null
 
       for (value <- values) {
         try {
           f(value)
-          successes += value
         } catch {
           case NonFatal(e) =>
             if (throwables == null) {
@@ -77,10 +75,9 @@ package object tryutils {
       }
 
       if (throwables != null) {
-        val successesResult = successes.result()
         val failuresResult = failures.result()
         val suppressed = suppress(throwables.result())
-        throw new TryForeachException(successesResult, failuresResult, suppressed)
+        throw new TryForeachException(failuresResult, suppressed)
       }
     }
 
