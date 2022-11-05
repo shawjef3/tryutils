@@ -41,6 +41,8 @@ try {
 }
 ```
 
+### Java
+
 ```java
 final Iterable<AutoCloseable> closeables = null;
 try {
@@ -55,6 +57,8 @@ try {
 The underlying mechanism for `tryClose` is `tryForeach`. It is the same, exception instead of calling `AutoCloseable#close()`,
 it will call a function of your choosing.
 
+### Scala
+
 ```scala
 val ints: Seq[Int] = null
 try {
@@ -64,6 +68,8 @@ try {
   // recover using `e.failures`
 }
 ```
+
+### Java
 
 ```java
 final Iterable<Object> closeables = null;
