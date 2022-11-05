@@ -2,7 +2,7 @@ organization := "me.jeffshaw.tryutils"
 
 name := "tryutils"
 
-version := "1.0.1"
+version := "1.0.2-SNAPSHOT"
 
 versionScheme := Some("semver-spec")
 
@@ -34,7 +34,11 @@ scalacOptions ++= {
 
 resolvers ++= Resolver.sonatypeOssRepos("releases")
 
-mimaPreviousArtifacts := Set("me.jeffshaw.tryutils" %% "tryutils" % "1.0.0")
+mimaPreviousArtifacts :=
+  Set(
+    "me.jeffshaw.tryutils" %% "tryutils" % "1.0.0",
+    "me.jeffshaw.tryutils" %% "tryutils" % "1.0.1"
+  )
 
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
