@@ -36,7 +36,7 @@ val closeables: Seq[AutoCloseable] = null
 try {
   closeables.tryClose()
 } catch {
-  case e: TryForeachException =>
+  case e: TryForeachException[AutoCloseable] =>
     // recover using `e.failures`
 }
 ```
@@ -45,6 +45,49 @@ try {
 final Iterable<AutoCloseable> closeables = null;
 try {
   TryIterable.tryClose(closeables);
+} catch (TryForeachException e) {
+  // recover using `e.getFailures()`
+}
+```
+
+## tryForeach
+
+The underlying mechanism for `tryClose` is `tryForeach`. It is the same, exception instead of calling `AutoCloseable#close()`,
+it will call a function of your choosing.
+
+```scala
+val ints: Seq[Int] = null
+try {
+  ints.tryForeach(i => if (i == 0) throw new Exception())
+} catch {
+  case e: TryForeachException[AutoCloseable] =>
+  // recover using `e.failures`
+}
+```
+
+```java
+final Iterable<Object> closeables = null;
+try {
+  TryIterable.tryForEach((Object o) -> {
+      if (isInvalid(o)) {
+        throw new RuntimeException();
+      },
+      closeables);
+} catch (TryForeachException e) {
+  // recover using `e.getFailures()`
+}
+```
+
+There are also specialized methods for primitives.
+
+```java
+final int[] ints = null;
+try {
+  TryIterable.tryForEachInt((int i) -> {
+      if (isInvalid(i)) {
+        throw new RuntimeException();
+      },
+      ints);
 } catch (TryForeachException e) {
   // recover using `e.getFailures()`
 }

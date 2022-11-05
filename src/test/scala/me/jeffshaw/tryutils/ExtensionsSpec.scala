@@ -11,11 +11,11 @@ class ReportsClosed extends AutoCloseable {
   }
 }
 
-class CloseException extends Exception
+class TestException extends RuntimeException
 
 class FailsClosed extends AutoCloseable {
   override def close(): Unit = {
-    throw new CloseException
+    throw new TestException
   }
 }
 
@@ -43,7 +43,7 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
         }
 
       assertResult(cs)(exception.failures)
-      assert(exception.getCause.isInstanceOf[CloseException])
+      assert(exception.getCause.isInstanceOf[TestException])
       assertResult(count - 1)(exception.getCause.getSuppressed.length)
     }
   }
@@ -61,7 +61,7 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
       } forall (_.isClosed)
     )
     assertResult(cs.filter(_.isInstanceOf[FailsClosed]))(exception.failures)
-    assert(exception.getCause.isInstanceOf[CloseException])
+    assert(exception.getCause.isInstanceOf[TestException])
     assertResult(1)(exception.getCause.getSuppressed.length)
   }
 
@@ -75,10 +75,10 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
           case n: Int if n % 2 == 0 =>
             n
           case _ =>
-            throw new CloseException
+            throw new TestException
         }
 
-      assert(failures.map(_._2).forall(_.isInstanceOf[CloseException]))
+      assert(failures.map(_._2).forall(_.isInstanceOf[TestException]))
       assertResult(count)(failures.size + successes.size)
     }
   }
@@ -126,10 +126,10 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
           case n if n % 2 == 0 =>
             Seq(n, n)
           case _ =>
-            throw new CloseException
+            throw new TestException
         }
 
-      assert(failures.map(_._2).forall(_.isInstanceOf[CloseException]))
+      assert(failures.map(_._2).forall(_.isInstanceOf[TestException]))
 
       assertResult(expectedFailureCount)(failures.size)
       assertResult(expectedSuccessCount)(successes.size)

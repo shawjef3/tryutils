@@ -50,6 +50,7 @@ extension [
    * Run `f` on all the values, but if any of them throw an exception, throw
    * an aggregate exception.
    */
+  @throws[TryForeachException[_]]
   def tryForeach(f: A => Unit): Unit =
     var throwables: Builder[Throwable, CC[Throwable]] = null
     var failures: Builder[A, Seq[A]] = null
@@ -74,6 +75,7 @@ extension [
   /**
    * Close all the values, but stop on the first exception.
    */
+  @throws[TryForeachException[_]]
   def close[B >: A]()(implicit ev: B <:< AutoCloseable): Unit =
     for value <- values do
       value.close()
@@ -82,5 +84,6 @@ extension [
    * Close all the values. Any exceptions will be recorded and thrown
    * in an aggregate exception.
    */
+  @throws[TryForeachException[_]]
   def tryClose[B >: A]()(implicit ev: B <:< AutoCloseable): Unit =
     tryForeach(_.close())
