@@ -74,11 +74,13 @@ try {
 ```java
 final Iterable<Object> closeables = null;
 try {
-  TryIterable.tryForEach((Object o) -> {
+  TryIterable.tryForEach(
+    (Object o) -> {
       if (isInvalid(o)) {
         throw new RuntimeException();
-      },
-      closeables);
+      }
+    },
+    closeables);
 } catch (TryForeachException e) {
   // recover using `e.getFailures()`
 }
@@ -89,11 +91,13 @@ There are also specialized methods for primitives.
 ```java
 final int[] ints = null;
 try {
-  TryIterable.tryForEachInt((int i) -> {
+  TryIterable.tryForEachInt(
+    (int i) -> {
       if (isInvalid(i)) {
         throw new RuntimeException();
-      },
-      ints);
+      }
+    },
+    ints);
 } catch (TryForeachException e) {
   // recover using `e.getFailures()`
 }
