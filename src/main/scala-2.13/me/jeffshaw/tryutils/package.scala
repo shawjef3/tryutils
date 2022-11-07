@@ -58,27 +58,23 @@ package object tryutils {
      */
     @throws[TryForeachException[_]]
     def tryForeach(f: A => Unit): Unit = {
-      var throwables: Builder[Throwable, Seq[Throwable]] = null
-      var failures: Builder[A, Seq[A]] = null
+      var failures: Builder[(A, Throwable), Seq[(A, Throwable)]] = null
 
       for (value <- values) {
         try {
           f(value)
         } catch {
           case NonFatal(e) =>
-            if (throwables == null) {
-              throwables = Seq.newBuilder[Throwable]
-              failures = Seq.newBuilder[A]
+            if (failures == null) {
+              failures = Seq.newBuilder[(A, Throwable)]
             }
-            throwables += e
-            failures += value
+            failures += ((value, e))
         }
       }
 
-      if (throwables != null) {
+      if (failures != null) {
         val failuresResult = failures.result()
-        val suppressed = suppress(throwables.result())
-        throw new TryForeachException(failuresResult, suppressed)
+        throw new TryForeachException(failuresResult)
       }
     }
 

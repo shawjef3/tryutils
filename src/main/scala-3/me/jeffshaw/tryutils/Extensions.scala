@@ -5,13 +5,6 @@ import scala.collection.mutable.Builder
 import scala.collection.IterableOps
 import scala.util.control.NonFatal
 
-private def suppress(throwables: Iterable[Throwable]): Throwable =
-  val head = throwables.head
-  for tail <- throwables.tail do
-    head.addSuppressed(tail)
-  head
-end suppress
-
 extension [
   A,
   CC[X] <: Iterable[X],
@@ -31,6 +24,7 @@ extension [
       case Failure(exception) =>
         failures += ((value, exception))
     (failures.result(), results.result())
+  end tryFlatMap
 
   /**
    * Run `f` on all the values. Any exceptions will be collected.
@@ -45,6 +39,7 @@ extension [
       case Failure(exception) =>
         failures += ((value, exception))
     (failures.result(), results.result())
+  end tryMap
 
   /**
    * Run `f` on all the values, but if any of them throw an exception, throw
@@ -52,25 +47,22 @@ extension [
    */
   @throws[TryForeachException[_]]
   def tryForeach(f: A => Unit): Unit =
-    var throwables: Builder[Throwable, CC[Throwable]] = null
-    var failures: Builder[A, Seq[A]] = null
+    var failures: Builder[(A, Throwable), Seq[(A, Throwable)]] = null
 
     for value <- values do
       try {
         f(value)
       } catch {
         case NonFatal(e) =>
-          if throwables == null then
-            throwables = values.iterableFactory.newBuilder[Throwable]
-            failures = Seq.newBuilder[A]
-          throwables += e
-          failures += value
+          if failures == null then
+            failures = Seq.newBuilder
+          failures += ((value, e))
       }
 
-    if throwables != null then
+    if failures != null then
       val failuresResult = failures.result()
-      val suppressed = suppress(throwables.result())
-      throw new TryForeachException(failuresResult, suppressed)
+      throw new TryForeachException(failuresResult)
+  end tryForeach
 
   /**
    * Close all the values, but stop on the first exception.
@@ -79,6 +71,7 @@ extension [
   def close[B >: A]()(implicit ev: B <:< AutoCloseable): Unit =
     for value <- values do
       value.close()
+  end close
 
   /**
    * Close all the values. Any exceptions will be recorded and thrown
@@ -87,3 +80,6 @@ extension [
   @throws[TryForeachException[_]]
   def tryClose[B >: A]()(implicit ev: B <:< AutoCloseable): Unit =
     tryForeach(_.close())
+  end tryClose
+
+end extension

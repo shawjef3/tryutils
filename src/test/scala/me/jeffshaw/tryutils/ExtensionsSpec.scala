@@ -42,7 +42,7 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
           cs.tryClose()
         }
 
-      assertResult(cs)(exception.failures)
+      assertResult(cs)(exception.failures.map(_._1))
       assert(exception.getCause.isInstanceOf[TestException])
       assertResult(count - 1)(exception.getCause.getSuppressed.length)
     }
@@ -60,7 +60,7 @@ class ExtensionsSpec extends AnyFunSuite with TableDrivenPropertyChecks {
         case r: ReportsClosed => r
       } forall (_.isClosed)
     )
-    assertResult(cs.filter(_.isInstanceOf[FailsClosed]))(exception.failures)
+    assertResult(cs.filter(_.isInstanceOf[FailsClosed]))(exception.failures.map(_._1))
     assert(exception.getCause.isInstanceOf[TestException])
     assertResult(1)(exception.getCause.getSuppressed.length)
   }

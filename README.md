@@ -9,7 +9,7 @@ The main problem I wanted solved was to call close on all items of a collection,
 ## Dependency
 
 ```sbt
-libraryDependencies += "me.jeffshaw.tryutils" %% "tryutils" % "1.0.1"
+libraryDependencies += "me.jeffshaw.tryutils" %% "tryutils" % "2.0.0"
 ```
 
 ## Imports
@@ -102,3 +102,9 @@ try {
   // recover using `e.getFailures()`
 }
 ```
+
+# Changelog
+
+## 2.0.0
+
+`TryForeachException` now directly ties the throwable to the value that caused it. Before you had to iterate through the cause and its suppressed exceptions.

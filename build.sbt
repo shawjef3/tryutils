@@ -2,7 +2,7 @@ organization := "me.jeffshaw.tryutils"
 
 name := "tryutils"
 
-version := "1.0.2-SNAPSHOT"
+version := "2.0.0"
 
 versionScheme := Some("semver-spec")
 

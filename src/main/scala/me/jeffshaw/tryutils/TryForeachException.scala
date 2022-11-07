@@ -1,5 +1,6 @@
 package me.jeffshaw.tryutils
 
+import java.util.{List => JavaList}
 import scala.collection.JavaConverters._
 
 /**
@@ -7,29 +8,40 @@ import scala.collection.JavaConverters._
  * and could not be closed.
  */
 class TryForeachException[A](
-  val failures: Seq[A],
+  val failures: Seq[(A, Throwable)],
   message: String,
-  cause: Throwable,
   enableSuppression: Boolean,
   writableStackTrace: Boolean
 ) extends Exception(
   message,
-  cause,
+  if (failures.isEmpty) null else TryForeachException.suppress(failures.map(_._2)),
   enableSuppression,
   writableStackTrace
 ) {
-  def this(failures: Seq[A], message: String, cause: Throwable) =
-    this(failures, message, cause, true, true)
+  def this(failures: Seq[(A, Throwable)], message: String) =
+    this(failures, message, true, true)
 
-  def this(failures: Seq[A], message: String) =
-    this(failures, message, null)
+  def this(failures: Seq[(A, Throwable)]) =
+    this(failures, null)
 
-  def this(failures: Seq[A], cause: Throwable) =
-    this(failures, null, cause)
-
-  def this(failures: Seq[A]) =
-    this(failures, null: String)
-
-  def getFailures(): java.util.List[A] =
+  def getFailures(): JavaList[(A, Throwable)] =
     failures.asJava
+
+  def getCauses(): JavaList[Throwable] = {
+    failures.map(_._2).asJava
+  }
+
+  def getFailedValues(): JavaList[A] = {
+    failures.map(_._1).asJava
+  }
+}
+
+object TryForeachException {
+  private def suppress(throwables: Iterable[Throwable]): Throwable = {
+    val head = throwables.head
+    for (tail <- throwables.tail) {
+      head.addSuppressed(tail)
+    }
+    head
+  }
 }
