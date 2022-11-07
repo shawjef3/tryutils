@@ -31,7 +31,7 @@ class TryForeachException[A](
     failures.map(_._2).asJava
   }
 
-  def getFailedValues(): JavaList[A] = {
+  def getValues(): JavaList[A] = {
     failures.map(_._1).asJava
   }
 }

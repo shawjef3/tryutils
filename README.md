@@ -82,7 +82,7 @@ try {
     },
     closeables);
 } catch (TryForeachException e) {
-  // recover using `e.getFailures()`
+  // recover using `e.getValues()`
 }
 ```
 
